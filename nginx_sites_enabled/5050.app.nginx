@@ -1,0 +1,24 @@
+server {
+
+    set $flask_forward_scheme http;
+    set $flask_server         127.0.0.1;
+    set $flask_port           5050;
+
+    server_name example.go;
+
+    listen 80;
+    listen [::]:80;
+
+    location /subdir {
+        proxy_set_header        X-Forwarded-Scheme $scheme;
+        proxy_set_header        X-Forwarded-Proto  $scheme;
+        proxy_set_header        X-Forwarded-For    $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Real-IP          $remote_addr;
+        proxy_pass              $flask_forward_scheme://$flask_server:$flask_port$request_uri;
+    }
+
+    location / {
+        root /usr/share/nginx/html;
+    }
+
+}
